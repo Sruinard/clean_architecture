@@ -1,6 +1,5 @@
-from cabrenter.entities.cab import Cab
 from cabrenter.interfaces.database_access_interface import DataAccessInterface, CabDatabaseInterface
-from typing import List, Dict
+from typing import List
 import pymongo
 
 class DataAccessCosmos(DataAccessInterface):

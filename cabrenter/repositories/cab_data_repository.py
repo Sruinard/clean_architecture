@@ -1,7 +1,9 @@
+from typing import List
+
+from cabrenter.entities.cab import Cab
 from cabrenter.interfaces.cab_interface import CabRepoInterface
 from cabrenter.interfaces.database_access_interface import DataAccessInterface
-from cabrenter.entities.cab import Cab
-from typing import List
+
 
 class CabRepository(CabRepoInterface):
 
@@ -25,7 +27,7 @@ class CabRepository(CabRepoInterface):
 
     
     def get_suitable_cabs(self, filters) -> List[Cab]:
-        city_cabs = self.database_access.get_city_cabs(city = filters.get("city"))
+        city_cabs = self.database_access.get_city_cabs(city=filters.get("city"))
         for cab in city_cabs:
             cab = Cab.from_dict(cab)
             if CabRepository.is_available_cab(cab):
