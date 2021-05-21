@@ -11,6 +11,16 @@ import dotenv
 dotenv.load_dotenv()
 app = FastAPI()
 
+
+@app.get("/")
+def welcome():
+    return "Hello Clean Architecture World"
+    
+
+@app.get("/healthz")
+def healthz():
+    return "Healthy"
+
 @app.get("/api/cabs")
 def get_suitable_cabs(city: str):
     cabs = CabSelector(
@@ -30,10 +40,10 @@ def get_suitable_cabs(city: str):
     cabs = CabSelector(
         repo=CabRepository(
             database_access=DataAccessSQL(
-                server=os.getenv("SERVER"),
-                database=os.getenv("DATABASE"),
-                username=os.getenv("USERNAME"),
-                password=os.getenv("PASSWORD")
+                server=os.getenv("SQL_SERVER"),
+                database=os.getenv("SQL_DATABASE"),
+                username=os.getenv("SQL_ADMIN"),
+                password=os.getenv("SQL_PASSWORD")
             )
 
         )
