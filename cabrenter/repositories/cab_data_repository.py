@@ -27,7 +27,6 @@ class CabRepository(CabRepoInterface):
     def get_suitable_cabs(self, filters) -> List[Cab]:
         cabs_collection = self.client[self.DATABASE_NAME][self.COLLECTION] 
         cabs = cabs_collection.find({})
-        print(cabs)
         for cab in cabs:
             cab = Cab.from_dict(cab)
             if CabRepository.is_available_cab(cab) and CabRepository.is_in_city_cab(cab, filters.get("city", "")):
