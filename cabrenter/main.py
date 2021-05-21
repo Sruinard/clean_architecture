@@ -2,8 +2,9 @@ from fastapi import FastAPI
 from cabrenter.entities.cab import Cab
 from cabrenter.use_cases.cab_selector import CabSelector
 from cabrenter.repositories.cab_data_repository import CabRepository
-from cabrenter.repositories.cab_data_repository_sql import CabRepositorySQL
 from cabrenter.data_structures.request_model import RequestModel
+from cabrenter.repositories.database_access_cosmosdb import DataAccessCosmos
+from cabrenter.repositories.database_access_sql import DataAccessSQL
 import os
 import dotenv
 
@@ -14,7 +15,9 @@ app = FastAPI()
 def get_suitable_cabs(city: str):
     cabs = CabSelector(
         repo=CabRepository(
-            connection_string=os.getenv("CONNECTION_STRING")
+            database_access=DataAccessCosmos(
+                connection_string=os.getenv("CONNECTION_STRING")
+            )
         )
     ).process_request(
         RequestModel(city=city)
@@ -25,11 +28,14 @@ def get_suitable_cabs(city: str):
 def get_suitable_cabs(city: str):
         
     cabs = CabSelector(
-        repo=CabRepositorySQL(
-            server=os.getenv("SERVER"),
-            database=os.getenv("DATABASE"),
-            username=os.getenv("USERNAME"),
-            password=os.getenv("PASSWORD")
+        repo=CabRepository(
+            database_access=DataAccessSQL(
+                server=os.getenv("SERVER"),
+                database=os.getenv("DATABASE"),
+                username=os.getenv("USERNAME"),
+                password=os.getenv("PASSWORD")
+            )
+
         )
     ).process_request(
         RequestModel(city=city)

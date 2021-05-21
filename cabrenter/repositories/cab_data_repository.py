@@ -1,15 +1,15 @@
 from cabrenter.interfaces.cab_interface import CabRepoInterface
+from cabrenter.interfaces.database_access_interface import DataAccessInterface
 from cabrenter.entities.cab import Cab
 from typing import List
-import pymongo
 
 class CabRepository(CabRepoInterface):
 
     DATABASE_NAME = "cabcenter"
     COLLECTION = "cabs"
 
-    def __init__(self, connection_string: str, port: int = 27016):
-        self.client = pymongo.MongoClient(connection_string, port=port) 
+    def __init__(self, database_access: DataAccessInterface):
+        self.database_access = database_access
         self.suitable_cabs = []
 
     @staticmethod
@@ -23,14 +23,11 @@ class CabRepository(CabRepoInterface):
             is_in_city = True
         return is_in_city
 
-        
+    
     def get_suitable_cabs(self, filters) -> List[Cab]:
-        cabs_collection = self.client[self.DATABASE_NAME][self.COLLECTION] 
-        cabs = cabs_collection.find({})
-        for cab in cabs:
+        city_cabs = self.database_access.get_city_cabs(city = filters.get("city"))
+        for cab in city_cabs:
             cab = Cab.from_dict(cab)
-            if CabRepository.is_available_cab(cab) and CabRepository.is_in_city_cab(cab, filters.get("city", "")):
+            if CabRepository.is_available_cab(cab):
                 self.suitable_cabs.append(cab)
         return self.suitable_cabs 
-        
-    
