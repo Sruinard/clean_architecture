@@ -1,7 +1,11 @@
 
 from cabrenter.interfaces.database_access_interface import DataAccessInterface, CabDatabaseInterface
+from cabrenter.entities.cab import Cab
 from typing import List, Dict
 import pyodbc
+import uuid
+
+uuid.uuid4()
 
 class DataAccessSQL(DataAccessInterface):
 
@@ -25,6 +29,14 @@ class DataAccessSQL(DataAccessInterface):
                     cabs.append(cab_dict)
                     row = cursor.fetchone()
         return cabs 
+
+    def insert_cab(self, cab: Cab) -> Cab:
+
+        with pyodbc.connect(self.connection_string) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(f"INSERT INTO Cabcenter (City, IsAvailable) VALUES ('{cab.city}', {int(cab.is_available)});")
+                cursor.commit()
+        return cab
 
         
     

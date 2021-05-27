@@ -62,6 +62,22 @@ def get_suitable_cabs(city: str):
     )
     return [cab.to_dict() for cab in cabs]
 
+@app.post("/api/cabs/sql")
+def add_cab(cab: CabModel):
+    cab = CabSelector(
+        repo=CabRepository(
+            database_access=DataAccessSQL(
+                server=os.getenv("SQL_SERVER"),
+                database=os.getenv("SQL_DATABASE"),
+                username=os.getenv("SQL_ADMIN"),
+                password=os.getenv("SQL_PASSWORD")
+            )
+        )
+    ).post(
+        request_object=cab
+    )
+    return cab
+
 @app.post("/api/cabs")
 def add_cab(cab: CabModel):
     cab = CabSelector(

@@ -9,5 +9,5 @@ class CabOutputData:
         return {
             "city": self.city,
             "is_available": self.is_available,
-            "self.datetime": self.datetime
+            "datetime": self.datetime
         }
