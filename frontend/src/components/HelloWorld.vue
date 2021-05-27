@@ -17,12 +17,11 @@
                 {{ item.city }}
               </div>
               <v-list-item-title class="headline mb-1">
-                Headline 5
+                {{ item.is_available }}
               </v-list-item-title>
-              <v-list-item-subtitle
-                >Greyhound divisely hello coldly
-                fonwderfully</v-list-item-subtitle
-              >
+              <v-list-item-subtitle>
+                {{ item.datetime }}
+              </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item> </v-card
         ><v-card></v-card> </v-col
@@ -45,7 +44,7 @@ export default {
   data: function () {
     return {
       city: "",
-      search: "",
+      search: "Amsterdam",
       items: [
         {
           city: "Amsterdam",
@@ -61,16 +60,15 @@ export default {
   },
   computed: {
     all_items() {
-      return this.$store.state.available_cabs;
+      return this.$store.getters.AvailableCabs;
     },
   },
   methods: {
     Fetch() {
-      alert("running");
       this.$store.dispatch("getAvailableCabs", { city: this.search });
     },
     submit() {
-      alert("hello");
+      this.$store.dispatch("PostCab", { city: this.search });
     },
   },
 };

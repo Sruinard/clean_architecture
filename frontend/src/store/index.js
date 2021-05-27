@@ -11,21 +11,22 @@ export default new Vuex.Store({
   mutations: {
     setAvailableCabs(state, data) {
       state.available_cabs = data;
+      console.log(data);
     },
   },
   actions: {
     async getAvailableCabs(context, city) {
-      const { data } = await axios.get(
-        `https://sruinardwebapp.azurewebsites.net/api/cabs?city=${city}`
-      );
+      let url = `https://sruinardwebapp.azurewebsites.net/api/cabs?city=${city.city}`;
+      console.log(url);
+      const { data } = await axios.get(url);
       context.commit("setAvailableCabs", data);
     },
     async PostCab(context, city) {
-      const res = await axios.post(
+      const { data } = await axios.post(
         "https://sruinardwebapp.azurewebsites.net/api/cabs",
-        { city: city }
+        { city: city.city, is_available: true }
       );
-      context.commit("SetAvailableCabs", res);
+      context.commit("setAvailableCabs", [data]);
     },
   },
   getters: {
