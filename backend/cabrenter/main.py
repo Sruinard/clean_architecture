@@ -21,6 +21,14 @@ app.add_middleware(
 
 app = FastAPI()
 
+@app.on_event("startup")
+async def startup():
+    DataAccessSQL(
+        server=os.getenv("SQL_SERVER"),
+        database=os.getenv("SQL_DATABASE"),
+        username=os.getenv("SQL_ADMIN"),
+        password=os.getenv("SQL_PASSWORD")
+    ).build()
 
 @app.get("/")
 def welcome():

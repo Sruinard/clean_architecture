@@ -1,5 +1,4 @@
 from typing import List
-
 from cabrenter.entities.cab import Cab
 
 class CabDatabaseInterface:

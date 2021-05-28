@@ -3,9 +3,7 @@ from cabrenter.interfaces.database_access_interface import DataAccessInterface, 
 from cabrenter.entities.cab import Cab
 from typing import List, Dict
 import pyodbc
-import uuid
 
-uuid.uuid4()
 
 class DataAccessSQL(DataAccessInterface):
 
@@ -38,5 +36,19 @@ class DataAccessSQL(DataAccessInterface):
                 cursor.commit()
         return cab
 
-        
+    def build(self):
+        with pyodbc.connect(self.connection_string) as conn:
+            with conn.cursor() as cursor:
+
+                if cursor.tables(table='Cabcenter', tableType='TABLE').fetchone():
+                    pass
+                else:
+                    cursor.execute(f"""
+                            CREATE TABLE Cabcenter (
+                            CabID INT IDENTITY(1,1) PRIMARY KEY,
+                            City VARCHAR(255),
+                            IsAvailable BIT
+                        )"""
+                    )
+                    cursor.commit()
     
