@@ -51,7 +51,7 @@ az webapp create --name $WEBAPP  --plan $WEBAPP_PLAN --runtime 'python|3.6'
 az webapp cors add  -n $WEBAPP --allowed-origins '*'
 az webapp config set -n $WEBAPP --startup-file 'gunicorn -w 2 -k uvicorn.workers.UvicornWorker cabrenter.main:app'
 
-CONNECTION_STRING=$(az cosmosdb keys list --name cabrenterdb --resource-group CleanArchitecture --type connection-strings --query "connectionStrings[0].connectionString" | tr -d \")
+CONNECTION_STRING=$(az cosmosdb keys list --name ${COSMOS_DB_ACCOUNT} --resource-group ${RESOURCE_GROUP} --type connection-strings --query "connectionStrings[0].connectionString" | tr -d \")
 az webapp config appsettings set --settings CONNECTION_STRING=$CONNECTION_STRING SQL_ADMIN=$LOGIN SQL_PASSWORD=$PASSWORD SQL_DATABASE=$DATABASE SQL_SERVER="${SERVER}.database.windows.net"  --name $WEBAPP
 
 cd ./backend && az webapp up -n $WEBAPP && cd ..
