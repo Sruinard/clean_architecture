@@ -1,12 +1,14 @@
 from fastapi import FastAPI
-from cabrenter.use_cases.cab_selector import CabSelector
-from cabrenter.repositories.cab_data_repository import CabRepository
-from cabrenter.data_structures.request_model import RequestModel, CabModel
-from cabrenter.repositories.database_access_cosmosdb import DataAccessCosmos
-from cabrenter.repositories.database_access_sql import DataAccessSQL
+from cabrenter.repositories.driver_workspace_repo import DriverWorkspaceCosmos
+from cabrenter.repositories.cab_finder_repo import MostSuitableCabCosmos
+from cabrenter.use_cases.find_optimal_cab import FindMostSuitableCabs
+from cabrenter.use_cases.driver_workspace import DriverWorkspace
+from cabrenter.models.request_models import CabConfiguration
 import os
 import dotenv
+import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
+
 
 dotenv.load_dotenv()
 app = FastAPI()
@@ -21,80 +23,65 @@ app.add_middleware(
 
 app = FastAPI()
 
-@app.on_event("startup")
-async def startup():
-    DataAccessSQL(
-        server=os.getenv("SQL_SERVER"),
-        database=os.getenv("SQL_DATABASE"),
-        username=os.getenv("SQL_ADMIN"),
-        password=os.getenv("SQL_PASSWORD")
-    ).build()
-
 @app.get("/")
 def welcome():
-    return "Hello Clean Architecture World"
-    
+    return "Welcome To The Clean Architecture Workshop"
 
-@app.get("/healthz")
-def healthz():
-    return "Healthy"
+#--------------------#
+#     Use Case 1     #
+#--------------------#
 
-@app.get("/api/cabs")
-def get_suitable_cabs(city: str):
-    cabs = CabSelector(
-        repo=CabRepository(
-            database_access=DataAccessCosmos(
+@app.get("/api/cabs/")
+def get_cabs_for_user(city: str, max_price: int):
+    repo = MostSuitableCabCosmos(
+            connection_string=os.getenv("CONNECTION_STRING")
+    )
+    response = FindMostSuitableCabs(repo=repo).get(
+            city=city,
+            max_price=max_price
+    )
+    return response
+
+#--------------------#
+#     Use Case 2     #
+#--------------------#
+
+@app.post("/api/driver/{driver_id}/cabs/")
+def create_cab(driver_id: int, cab: CabConfiguration):
+    CosmosRepo = DriverWorkspaceCosmos(
                 connection_string=os.getenv("CONNECTION_STRING")
             )
-        )
-    ).get(
-        RequestModel(city=city)
+    usecase = DriverWorkspace(repo=CosmosRepo)
+    response = usecase.add_cab(
+        driver_id=driver_id,
+        city=cab.city, 
+        brand=cab.brand, 
+        hourly_price=cab.hourly_price
     )
-    return [cab.to_dict() for cab in cabs]
+    return response
 
-@app.get("/api/cabs/sql")
-def get_suitable_cabs(city: str):
-        
-    cabs = CabSelector(
-        repo=CabRepository(
-            database_access=DataAccessSQL(
-                server=os.getenv("SQL_SERVER"),
-                database=os.getenv("SQL_DATABASE"),
-                username=os.getenv("SQL_ADMIN"),
-                password=os.getenv("SQL_PASSWORD")
-            )
 
-        )
-    ).get(
-        RequestModel(city=city)
-    )
-    return [cab.to_dict() for cab in cabs]
-
-@app.post("/api/cabs/sql")
-def add_cab(cab: CabModel):
-    cab = CabSelector(
-        repo=CabRepository(
-            database_access=DataAccessSQL(
-                server=os.getenv("SQL_SERVER"),
-                database=os.getenv("SQL_DATABASE"),
-                username=os.getenv("SQL_ADMIN"),
-                password=os.getenv("SQL_PASSWORD")
-            )
-        )
-    ).post(
-        request_object=cab
-    )
-    return cab
-
-@app.post("/api/cabs")
-def add_cab(cab: CabModel):
-    cab = CabSelector(
-        repo=CabRepository(
-            database_access=DataAccessCosmos(
+@app.get("/api/driver/{driver_id}/cabs/")
+def get_cabs(driver_id: int):
+    CosmosRepo = DriverWorkspaceCosmos(
                 connection_string=os.getenv("CONNECTION_STRING")
             )
-        )
-    ).post(
-        request_object=cab
+    usecase = DriverWorkspace(repo=CosmosRepo)
+    response = usecase.get_cabs(
+        driver_id=driver_id,
     )
-    return cab
+    return response
+
+@app.get("/api/driver/{driver_id}/cabs/{cab_id}")
+def get_cab(driver_id: int, cab_id: str):
+    CosmosRepo = DriverWorkspaceCosmos(
+                connection_string=os.getenv("CONNECTION_STRING")
+            )
+    usecase = DriverWorkspace(repo=CosmosRepo)
+    response = usecase.get_cab(
+        driver_id, cab_id
+    )
+    return response
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
