@@ -31,7 +31,7 @@ def welcome():
 #     Use Case 1     #
 #--------------------#
 
-@app.get("/api/cabs/")
+@app.get("/api/cabs")
 def get_cabs_for_user(city: str, max_price: int):
     repo = MostSuitableCabCosmos(
             connection_string=os.getenv("CONNECTION_STRING")
@@ -46,7 +46,7 @@ def get_cabs_for_user(city: str, max_price: int):
 #     Use Case 2     #
 #--------------------#
 
-@app.post("/api/driver/{driver_id}/cabs/")
+@app.post("/api/driver/{driver_id}/cabs")
 def create_cab(driver_id: int, cab: CabConfiguration):
     CosmosRepo = DriverWorkspaceCosmos(
                 connection_string=os.getenv("CONNECTION_STRING")
@@ -61,7 +61,7 @@ def create_cab(driver_id: int, cab: CabConfiguration):
     return response
 
 
-@app.get("/api/driver/{driver_id}/cabs/")
+@app.get("/api/driver/{driver_id}/cabs")
 def get_cabs(driver_id: int):
     CosmosRepo = DriverWorkspaceCosmos(
                 connection_string=os.getenv("CONNECTION_STRING")
