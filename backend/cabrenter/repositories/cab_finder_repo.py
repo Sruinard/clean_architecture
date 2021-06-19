@@ -1,6 +1,10 @@
+# File containing the Repository implementation for finding the most suitable cabs for a user.
+from typing import List
+
 import pymongo
 from cabrenter.entities.cab import Cab
-from cabrenter.use_cases.find_optimal_cab_repo_interface import MostSuitableCabRepoInterface
+from cabrenter.use_cases.find_optimal_cab_repo_interface import \
+    MostSuitableCabRepoInterface
 
 
 class MostSuitableCabCosmos(MostSuitableCabRepoInterface):
@@ -10,7 +14,7 @@ class MostSuitableCabCosmos(MostSuitableCabRepoInterface):
     def __init__(self, connection_string: str, port: int = 27016):
         self.client = pymongo.MongoClient(connection_string, port=port) 
 
-    def get_suitable_cabs(self, city, max_price):
+    def get_suitable_cabs(self, city: str, max_price: int) -> List[Cab]:
         cabs_collection = self.client[self.DATABASE_NAME][self.COLLECTION] 
         cabs = cabs_collection.find({
             "city": {

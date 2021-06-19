@@ -1,9 +1,12 @@
+# File containing the repository for the driver workspace.
 from typing import List
 
 import pymongo
 from bson.objectid import ObjectId
 from cabrenter.entities.cab import Cab
-from cabrenter.use_cases.driver_workspace_repo_interface import DriverWorkspaceRepoInterface
+from cabrenter.use_cases.driver_workspace_repo_interface import \
+    DriverWorkspaceRepoInterface
+
 
 class DriverWorkspaceCosmos(DriverWorkspaceRepoInterface):
     DATABASE_NAME = "cabcenter"

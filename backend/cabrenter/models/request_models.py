@@ -1,3 +1,4 @@
+# File containing endpoint request models.
 from pydantic import BaseModel
 
 class CabConfiguration(BaseModel):

@@ -1,14 +1,16 @@
-from fastapi import FastAPI
-from cabrenter.repositories.driver_workspace_repo import DriverWorkspaceCosmos
-from cabrenter.repositories.cab_finder_repo import MostSuitableCabCosmos
-from cabrenter.use_cases.find_optimal_cab import FindMostSuitableCabs
-from cabrenter.use_cases.driver_workspace import DriverWorkspace
-from cabrenter.models.request_models import CabConfiguration
+# File containing the API endpoints.
 import os
+
 import dotenv
 import uvicorn
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from cabrenter.models.request_models import CabConfiguration
+from cabrenter.repositories.cab_finder_repo import MostSuitableCabCosmos
+from cabrenter.repositories.driver_workspace_repo import DriverWorkspaceCosmos
+from cabrenter.use_cases.driver_workspace import DriverWorkspace
+from cabrenter.use_cases.find_optimal_cab import FindMostSuitableCabs
 
 dotenv.load_dotenv()
 app = FastAPI()

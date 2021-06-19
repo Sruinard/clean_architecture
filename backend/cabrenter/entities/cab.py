@@ -1,3 +1,5 @@
+# File for describing the Cab entity.
+
 class Cab:
 
     def __init__(self, city:str, brand: str, hourly_price: int, is_available: bool = True, id=None) -> None:

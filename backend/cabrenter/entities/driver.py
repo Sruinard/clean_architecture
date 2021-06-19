@@ -1,4 +1,4 @@
-
+# File containing the driver entity.
 
 class Driver:
     def __init__(self, name, email, phone, operating_city, cab=None, driver_id=None) -> None:

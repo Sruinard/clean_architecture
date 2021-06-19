@@ -1,3 +1,6 @@
+# File containing the user entity.
+
+
 class User:
     
     def __init__(self, name, email, phone, user_id=None):
